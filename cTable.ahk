@@ -19,12 +19,28 @@
 class cTable {
    static ColumnNames := Object()
    static FilePath := ""
-   static ColumnsDelimiter := "`t"
-   static RowsDelimiter := "`n"
+   _columnsDelimiter := "`t"
+   _rowsDelimiter := "`n"
    _debug := 0
-   _version := "0.1.1"
+   _version := "0.1.2"
 
    ; ##################### Properties (AHK >1.1.16.x) #################################################################
+   columnsDelimiter[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: columnsDelimiter [get/set]
+	Column delimiter for the table file
+
+	Value:
+	value - row delimiter, default <`t>
+	*/
+		get {
+			return this._columnsDelimiter
+		}
+		set {
+			this._columnsDelimiter := value
+			return this._columnsDelimiter
+		}
+	}
 	debug[] {
 	/* ------------------------------------------------------------------------------- 
 	Property: debug [get/set]
@@ -40,6 +56,22 @@ class cTable {
 			mode := value<1?0:1
 			this._debug := mode
 			return this._debug
+		}
+	}
+    rowsDelimiter[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: rowsDelimiter [get/set]
+	Row delimiter for the table file
+
+	Value:
+	value - row delimiter, default <`n>
+	*/
+		get {
+			return this._rowsDelimiter
+		}
+		set {
+			this._rowsDelimiter := value
+			return this._rowsDelimiter
 		}
 	}
     version[] {
@@ -59,8 +91,8 @@ class cTable {
       if (this._debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(InputVariableOrFile=(" InputVariableOrFile "), ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"        ; _DBG_
       
-      this.ColumnsDelimiter := ColumnsDelimiter
-      this.RowsDelimiter := RowsDelimiter
+      this.columnsDelimiter(ColumnsDelimiter)
+      this.rowsDelimiter(RowsDelimiter)
       
       if % (A_AhkVersion < "1.1.05.00" && A_AhkVersion >= "2.0") {
          MsgBox % "This class is only tested with AHK_L later than 1.1.05.00 (and before 2.0)`nAborting..."
@@ -94,7 +126,7 @@ class cTable {
             continue
          }
          RowNum := A_index-1
-         %RowNum% :=  new cTableRow(CurRow, ColumnsCount, ColumnsDelimiter)
+         %RowNum% :=  new cTableRow(CurRow, ColumnsCount, this.columnsDelimiter)
       
          this.Insert(%RowNum%)
       }
@@ -110,7 +142,7 @@ class cTable {
       
       NewRowNum := this.MaxIndex() + 1
       TotalColumns := this.ColumnNames.MaxIndex()
-      %NewRowNum% := new cTableRow("",0,ColumnsDelimiter)
+      %NewRowNum% := new cTableRow("",0,this.columnsDelimiter)
       For k,v in Fields
       {
          if (A_index > TotalColumns)
@@ -183,7 +215,7 @@ class cTable {
       if (this._debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
-         ColumnsDelimiter := this.ColumnsDelimiter
+         ColumnsDelimiter := this.columnsDelimiter
       For k,v in this.ColumnNames
          Header .= v ColumnsDelimiter
       RetVal := RTrim(Header, ColumnsDelimiter)
@@ -201,7 +233,7 @@ class cTable {
       if (NewRowNum > this.MaxIndex())
          NewRowNum := this.MaxIndex() + 1   ; add as last row
    
-      %NewRowNum% := new cTableRow("",0,ColumnsDelimiter)
+      %NewRowNum% := new cTableRow("",0,this.columnsDelimiter)
       TotalColumns := this.ColumnNames.MaxIndex()
       For k,v in Fields
       {
@@ -334,7 +366,7 @@ class cTable {
       if (this._debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowToModifyNumber=(" RowToModifyNumber "), Fields=(" Fields "))]"           ; _DBG_
    
-      oModifyedRow := new cTableRow("",0,ColumnsDelimiter)
+      oModifyedRow := new cTableRow("",0,this.columnsDelimiter)
       TotalColumns := this.ColumnNames.MaxIndex()
       For k,v in Fields
       {
@@ -356,7 +388,7 @@ class cTable {
    NewFromScheme() {   ; creates new empty table from table object template
       if (this._debug)                                                           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"                                    ; _DBG_
-      oNewTable := new cTable("", this.ColumnsDelimiter, this.RowsDelimiter)
+      oNewTable := new cTable("", this.ColumnsDelimiter, this.rowsDelimiter)
       oNewTable.ColumnNames := this.ColumnNames
       if (this._debug)                                                           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "() -> (" _cTable_ToString(oTable)")]"           ; _DBG_
@@ -373,12 +405,10 @@ class cTable {
    
    Reload() {   ; reads table's constructor file again and reconstructs table object if constructor file exists   
       FilePath := this.FilePath
-      ColumnsDelimiter := this.ColumnsDelimiter, 
-      RowsDelimiter := this.RowsDelimiter
       IfNotExist, %FilePath%   ; if constructor file doesn't exist
          return   ; return and leave old table object as is
    
-      this := new cTable(FilePath, ColumnsDelimiter,RowsDelimiter) 
+      this := new cTable(FilePath, this.columnsDelimiter,this.rowsDelimiter) 
    
       return this   ; not necessary as first param is ByRef, but keep it
    }
@@ -451,9 +481,9 @@ class cTable {
       if (this._debug)                                                                                                                                       ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(FilePath=(" FilePath "), ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
-         ColumnsDelimiter := this.ColumnsDelimiter
+         ColumnsDelimiter := this.columnsDelimiter
       if RowsDelimiter =
-         RowsDelimiter := this.RowsDelimiter
+         RowsDelimiter := this.rowsDelimiter
       this.FilePath := FilePath
    
       FileContents := this.HeaderToString(ColumnsDelimiter) RowsDelimiter this.ToString(ColumnsDelimiter, RowsDelimiter)
@@ -692,7 +722,7 @@ class cTable {
       if ColumnsDelimiter =
          ColumnsDelimiter := this.ColumnsDelimiter
       if RowsDelimiter =
-         RowsDelimiter := this.RowsDelimiter
+         RowsDelimiter := this.rowsDelimiter
 
       MyCount := this.MaxIndex()
       Loop, %MyCount%
@@ -737,11 +767,27 @@ class cTable {
       Base class for handling table rows
 */
 class cTableRow {
-   _version := "0.1.1"
-   static ColumnsDelimiter := "`t"
+   _version := "0.1.2"
+   _columnsDelimiter := "`t"
    _debug := 0
 
    ; ##################### Properties (AHK >1.1.16.x) #################################################################
+   columnsDelimiter[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: columnsDelimiter [get/set]
+	colums Delimiter for given Row
+
+	Value:
+	flag - *true* or *false*
+	*/
+		get {
+			return this._columnsDelimiter
+		}
+		set {
+			this._columnsDelimiter := value
+			return this._columnsDelimiter
+		}
+	}
 	debug[] {
 	/* ------------------------------------------------------------------------------- 
 	Property: debug [get/set]
@@ -775,6 +821,7 @@ class cTableRow {
       if (this._debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(CurRow=(" CurRow "), ColumnsCount=(" ColumnsCount "), ColumnsDelimiter=("  ColumnsDelimiter "))]"           ; _DBG_
       
+      this.columnsDelimiter(ColumnsDelimiter)
       StringSplit, field, CurRow, %ColumnsDelimiter%
       Loop, %ColumnsCount%
          this.Insert(field%A_Index%)
@@ -792,7 +839,7 @@ class cTableRow {
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "))]"            ; _DBG_
       
       if ColumnsDelimiter = 
-         ColumnsDelimiter := this.ColumnsDelimiter
+         ColumnsDelimiter := this.columnsDelimiter
       Cols := this.MaxIndex()
       Loop, %Cols%
       {
@@ -802,7 +849,7 @@ class cTableRow {
       }
       RetVal:= RowString
       if (this._debug)                                                  ; _DBG_
-         OutputDebug % "<[" A_ThisFunc "(...) -> (" RetVal ")]"           ; _DBG_
+         OutputDebug % "<[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter ")) -> (" RetVal ")]"           ; _DBG_
       return RetVal
    }
    
