@@ -17,20 +17,43 @@
    Inherits: cTableBase
 */
 class cTable {
-   static _version := "0.1.0.0"
    static ColumnNames := Object()
    static FilePath := ""
    static ColumnsDelimiter := "`t"
    static RowsDelimiter := "`n"
-   static _debug := 0
+   _debug := 0
+   _version := "0.1.1"
 
-   __debug(value="") {              ; _DBG_
-      if % (value="")               ; _DBG_
-         return this._debug         ; _DBG_
-      value := value<1?0:1          ; _DBG_
-      this._debug := value          ; _DBG_
-   }                               ; _DBG_
+   ; ##################### Properties (AHK >1.1.16.x) #################################################################
+	debug[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: debug [get/set]
+	Debug flag for debugging the object
+
+	Value:
+	flag - *true* or *false*
+	*/
+		get {
+			return this._debug
+		}
+		set {
+			mode := value<1?0:1
+			this._debug := mode
+			return this._debug
+		}
+	}
+    version[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: version [get]
+	Get the version of the class implementation
+	*/
+		get {
+			return this._version
+		}
+	}
+    
    
+   ; ##################### public methods ##############################################################################
    __New(InputVariableOrFile, ColumnsDelimiter="`t", RowsDelimiter= "`n", _debug=0) {
       this.__debug(_debug)
       if (this._debug)           ; _DBG_
@@ -703,45 +726,50 @@ class cTable {
          TotalFields =
       }
       if (this._debug)           ; _DBG_
-         OutputDebug % "<[" A_ThisFunc "(...) -> ()]"           ; _DBG_
-   }
-
-   Version() {
-      if (this._debug)           ; _DBG_
-         OutputDebug % "|[" A_ThisFunc "() -> (" this._version ")]"           ; _DBG_
-      return this._version
+         OutputDebug % "<[" A_ThisFunc "() -> ()]"           ; _DBG_
    }
    
 }
 
-
+; ######################################################################################################################
 /*!
    Class: cTableRow
       Base class for handling table rows
 */
 class cTableRow {
-      /**************************************************************************************************************
-   Variable: version
-   Version of class implementation
-   ***************************************************************************************************************	
-   */
-   static _version := "0.1.0"
+   _version := "0.1.1"
    static ColumnsDelimiter := "`t"
-   static _debug := 0
+   _debug := 0
 
-   Version() {
-      if (this._debug)           ; _DBG_
-         OutputDebug % "|[" A_ThisFunc "() -> (" this._version ")]"           ; _DBG_
-      return this._version
-   }
-   
-   __debug(value="") {                ; _DBG_
-      if value=""                   ; _DBG_
-         return this._debug          ; _DBG_
-      value := value>1?1:0          ; _DBG_
-      this._debug := value            ; _DBG_
-   }                                ; _DBG_
-   
+   ; ##################### Properties (AHK >1.1.16.x) #################################################################
+	debug[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: debug [get/set]
+	Debug flag for debugging the object
+
+	Value:
+	flag - *true* or *false*
+	*/
+		get {
+			return this._debug
+		}
+		set {
+			mode := value<1?0:1
+			this._debug := mode
+			return this._debug
+		}
+	}
+    version[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: version [get]
+	Get the version of the class implementation
+	*/
+		get {
+			return this._version
+		}
+	}
+    
+   ; ##################### public methods ##############################################################################
    __New(CurRow="", ColumnsCount=0, ColumnsDelimiter="`t", _debug=0) {
       this.__debug(_debug)
       if (this._debug)           ; _DBG_
