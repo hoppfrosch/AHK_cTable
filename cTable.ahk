@@ -17,30 +17,85 @@
    Inherits: cTableBase
 */
 class cTable {
-   static _version := "0.1.0.0"
    static ColumnNames := Object()
    static FilePath := ""
-   static ColumnsDelimiter := "`t"
-   static RowsDelimiter := "`n"
-   static _debug := 0
+   _columnsDelimiter := "`t"
+   _rowsDelimiter := "`n"
+   _debug := 0
+   _version := "0.1.2"
 
-   __debug(value="") {              ; _DBG_
-      if % (value="")               ; _DBG_
-         return this._debug         ; _DBG_
-      value := value<1?0:1          ; _DBG_
-      this._debug := value          ; _DBG_
-   }                               ; _DBG_
+   ; ##################### Properties (AHK >1.1.16.x) #################################################################
+   columnsDelimiter[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: columnsDelimiter [get/set]
+	Column delimiter for the table file
+
+	Value:
+	value - column delimiter, default <`t>
+	*/
+		get {
+			return this._columnsDelimiter
+		}
+		set {
+			this._columnsDelimiter := value
+			return this._columnsDelimiter
+		}
+	}
+	debug[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: debug [get/set]
+	Debug flag for debugging the object
+
+	Value:
+	flag - *true* or *false*
+	*/
+		get {
+			return this._debug
+		}
+		set {
+			mode := value<1?0:1
+			this._debug := mode
+			return this._debug
+		}
+	}
+    rowsDelimiter[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: rowsDelimiter [get/set]
+	Row delimiter for the table file
+
+	Value:
+	value - row delimiter, default <`n>
+	*/
+		get {
+			return this._rowsDelimiter
+		}
+		set {
+			this._rowsDelimiter := value
+			return this._rowsDelimiter
+		}
+	}
+    version[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: version [get]
+	Get the version of the class implementation
+	*/
+		get {
+			return this._version
+		}
+	}
+    
    
-   __New(InputVariableOrFile, ColumnsDelimiter="`t", RowsDelimiter= "`n", _debug=0) {
-      this.__debug(_debug)
-      if (this._debug)           ; _DBG_
+   ; ##################### public methods ##############################################################################
+   __New(InputVariableOrFile, ColumnsDelimiter := "`t", RowsDelimiter :=  "`n", _debug := 0) {
+      this.debug := _debug
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(InputVariableOrFile=(" InputVariableOrFile "), ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"        ; _DBG_
       
-      this.ColumnsDelimiter := ColumnsDelimiter
-      this.RowsDelimiter := RowsDelimiter
+      this.columnsDelimiter := ColumnsDelimiter
+      this.rowsDelimiter := RowsDelimiter
       
-      if % (A_AhkVersion < "1.1.05.00" && A_AhkVersion >= "2.0") {
-         MsgBox % "This class is only tested with AHK_L later than 1.1.05.00 (and before 2.0)`nAborting..."
+      if % (A_AhkVersion < "1.1.23.00" && A_AhkVersion >= "2.0") {
+         MsgBox % "This class is only tested with AHK later than 1.1.23.00 (and before 2.0)`nAborting..."
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"   ; _DBG_
          return 
       }
@@ -71,23 +126,23 @@ class cTable {
             continue
          }
          RowNum := A_index-1
-         %RowNum% :=  new cTableRow(CurRow, ColumnsCount, ColumnsDelimiter)
+         %RowNum% :=  new cTableRow(CurRow, ColumnsCount, this.columnsDelimiter, this.debug)
       
          this.Insert(%RowNum%)
       }
       
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> (" _cTable_ToString(this) ")]"   ; _DBG_
       return this
    }
    
    AddRow(Fields*) {   ; adds new row to table (to the bottom)
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(Fields=(" Fields "))]"           ; _DBG_
       
       NewRowNum := this.MaxIndex() + 1
       TotalColumns := this.ColumnNames.MaxIndex()
-      %NewRowNum% := new cTableRow("",0,ColumnsDelimiter)
+      %NewRowNum% := new cTableRow("",0,this.columnsDelimiter)
       For k,v in Fields
       {
          if (A_index > TotalColumns)
@@ -96,7 +151,7 @@ class cTable {
       }
       this.Insert(%NewRowNum%)
       
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> (" NewRowNum ")]"           ; _DBG_
       
       return NewRowNum
@@ -104,7 +159,7 @@ class cTable {
    
    Col2Num(ColumnsToSearch) {      ; converts column name(s) to column number(s)
       
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsToSearch=(" ColumnsToSearch "))]"           ; _DBG_
       
       StringReplace, ColumnsToSearch, ColumnsToSearch, `,, `,`,, all
@@ -116,20 +171,20 @@ class cTable {
       }
       RetVal := RTrim(Found, "|")
       
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> (" RetVal ")]"           ; _DBG_
       
       return RetVal
    }
    
    DeleteRow(RowToDeleteNumber="") {   ; deletes row(s)
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowToDeleteNumber=(" RowToDeleteNumber "))]"           ; _DBG_
       
       if (RowToDeleteNumber = 0)   ; delete all existing rows
       {
          this.Remove(1, this.MaxIndex())
-         if (this._debug)           ; _DBG_
+         if (this.debug)           ; _DBG_
             OutputDebug % "<[" A_ThisFunc "(...) -> ()]"           ; _DBG_
          return
       }
@@ -139,7 +194,7 @@ class cTable {
          LastRN := this.MaxIndex()
          oDeletedRow := this[LastRN]
          this.Remove(LastRN)
-         if (this._debug)           ; _DBG_
+         if (this.debug)           ; _DBG_
             OutputDebug % "<[" A_ThisFunc "(...) -> (" _cTable_ToString(oDeletedRow) ")]"           ; _DBG_
          return oDeletedRow
       }
@@ -148,29 +203,29 @@ class cTable {
          oDeletedRow := Object()
          oDeletedRow := this[RowToDeleteNumber]
          this.Remove(RowToDeleteNumber)
-         if (this._debug)           ; _DBG_
+         if (this.debug)           ; _DBG_
             OutputDebug % "<[" A_ThisFunc "(...) -> (" _cTable_ToString(oDeletedRow) ")]"           ; _DBG_
          return oDeletedRow
       }
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"           ; _DBG_
    }
    
    HeaderToString(ColumnsDelimiter="") {   ; converts table's header (first row) to string
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
-         ColumnsDelimiter := this.ColumnsDelimiter
+         ColumnsDelimiter := this.columnsDelimiter
       For k,v in this.ColumnNames
          Header .= v ColumnsDelimiter
       RetVal := RTrim(Header, ColumnsDelimiter)
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> (" RetVal ")]"            ; _DBG_
       return RetVal
    }
    
    InsertRow(NewRowNum ,Fields*) {   ; inserts new row in table
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(NewRowNum=(" NewRowNum "), Fields=(" Fields "))]"           ; _DBG_
       if NewRowNum = 0   ; not allowed
          return
@@ -178,7 +233,7 @@ class cTable {
       if (NewRowNum > this.MaxIndex())
          NewRowNum := this.MaxIndex() + 1   ; add as last row
    
-      %NewRowNum% := new cTableRow("",0,ColumnsDelimiter)
+      %NewRowNum% := new cTableRow("",0,this.columnsDelimiter)
       TotalColumns := this.ColumnNames.MaxIndex()
       For k,v in Fields
       {
@@ -187,12 +242,12 @@ class cTable {
          %NewRowNum%.Insert(v)
       }
       this.Insert(NewRowNum, %NewRowNum%)
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
    
    LVAdd(Fields*) {   ; adds new row to oTable and ListView
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(Fields=(" _cTable_ToString(Fields) "))]"           ; _DBG_
       ; add to oTable
       this.AddRow(Fields*)   
@@ -211,7 +266,7 @@ class cTable {
    }
    
    LVDelete(RowNumToSearch="") {   ; deletes selected row from oTable and ListView. Deletes just 1. selected row for now.
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowNumToSearch=(" RowNumToSearch "))]"           ; _DBG_
       oSelected := this.LVSelInfo(RowNumToSearch)
       For k,v in oSelected   ; oSelected structure: o1SelRow, o2SelRow, o3SelRow, etc.
@@ -226,7 +281,7 @@ class cTable {
             else
                break   ; [3,4,5 etc.] FieldsText - not relevant
          }
-         if (this._debug)           ; _DBG_
+         if (this.debug)           ; _DBG_
             OutputDebug % "<[" A_ThisFunc "(...) -> (" _cTable_ToString(oSelected.1) ")]"           ; _DBG_
          return  oSelected.1      ; allow deleting just 1. selected row for now. Ignore other. Return info about deleted row.
       }
@@ -235,7 +290,7 @@ class cTable {
    LVModify1(RowNumToSearch="") {   ; Returns row's to modify fields. Must be called prior to oTable.LVModify2()
       ; Relevant for machine: stores oTableRowNum and LVRowNum in oTable.LVModifyRowNums
       ; for faster performance when displaying search results in LV, specify oFound.LastFound as RowNumToSearch
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowNumToSearch=(" RowNumToSearch "))]"           ; _DBG_
       oSelected := this.LVSelInfo(RowNumToSearch)
       oFields := Object()
@@ -251,13 +306,13 @@ class cTable {
             oFields.Insert(v)   
       }
       this.LVModifyRowNums := oRowNums   ; info used by oTable.LVModify2
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
             OutputDebug % "<[" A_ThisFunc "(...) -> (" _cTable_ToString(oFields) ")]"           ; _DBG_
       return oFields   ; return row's to modify fields
    } 
    
    LVModify2(oNewFields) {   ; modifies row in ListView and oTable
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(oNewFields=(" _cTable_ToString(oNewFields) "))]"           ; _DBG_
     
       TableRowNum := this.LVModifyRowNums.1   ; [1] oTableRowNum
@@ -267,12 +322,12 @@ class cTable {
       For k,v in oNewFields
          f%k% := v
       LV_Modify(LVRowNum,"",f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,f19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30)
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
 
    LVSelInfo(RowNumToSearch="") {   ; gets info about selected rows in ListView
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowNumToSearch=(" RowNumToSearch "))]"           ; _DBG_
       Loop, %   LV_GetCount("Column") ; total number of columns in LV
          FromColumns .= A_Index "|"   
@@ -302,16 +357,16 @@ class cTable {
          %oSelRow%[1] := this.Row2NumL(RowNumToSearch, oFields*)    ; [1] oTable RowNum - real
          oSelected.Insert(%oSelRow%), oFields := ""
       }
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> (" _cTable_ToString(oSelected) ")]"           ; _DBG_
       return oSelected
    }
 
    ModifyRow(RowToModifyNumber, Fields*) {   ; modifies row(s)
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowToModifyNumber=(" RowToModifyNumber "), Fields=(" Fields "))]"           ; _DBG_
    
-      oModifyedRow := new cTableRow("",0,ColumnsDelimiter)
+      oModifyedRow := new cTableRow("",0,this.columnsDelimiter)
       TotalColumns := this.ColumnNames.MaxIndex()
       For k,v in Fields
       {
@@ -326,22 +381,22 @@ class cTable {
       }
       else   ; modify specified row
          this[RowToModifyNumber] := oModifyedRow
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
       OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
  
    NewFromScheme() {   ; creates new empty table from table object template
-      if (this._debug)                                                           ; _DBG_
+      if (this.debug)                                                           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"                                    ; _DBG_
-      oNewTable := new cTable("", this.ColumnsDelimiter, this.RowsDelimiter)
+      oNewTable := new cTable("", this.ColumnsDelimiter, this.rowsDelimiter)
       oNewTable.ColumnNames := this.ColumnNames
-      if (this._debug)                                                           ; _DBG_
+      if (this.debug)                                                           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "() -> (" _cTable_ToString(oTable)")]"           ; _DBG_
       return oNewTable
    }
    
    Open() {   ; opens table's constructor file in Notepad if it exists
-      if (this._debug)                                                           ; _DBG_
+      if (this.debug)                                                           ; _DBG_
          OutputDebug % "|[" A_ThisFunc "()]"                                    ; _DBG_
       FilePath := this.FilePath
       IfExist, %FilePath%
@@ -350,18 +405,16 @@ class cTable {
    
    Reload() {   ; reads table's constructor file again and reconstructs table object if constructor file exists   
       FilePath := this.FilePath
-      ColumnsDelimiter := this.ColumnsDelimiter, 
-      RowsDelimiter := this.RowsDelimiter
       IfNotExist, %FilePath%   ; if constructor file doesn't exist
          return   ; return and leave old table object as is
    
-      this := new cTable(FilePath, ColumnsDelimiter,RowsDelimiter) 
+      this := new cTable(FilePath, this.columnsDelimiter,this.rowsDelimiter) 
    
       return this   ; not necessary as first param is ByRef, but keep it
    }
    
    Row2Num(Fields*) {   ; converts row identified by its fields to number. First matching.
-      if (this._debug)                                                           ; _DBG_
+      if (this.debug)                                                           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(Fields=(" Fields "))]"                 ; _DBG_
       TotalColumns := this.ColumnNames.MaxIndex()
       For k,v in Fields
@@ -378,14 +431,14 @@ class cTable {
             RowString .= v2
       
          if (RowString = RowStringToSearch) {
-            if (this._debug)                                                 ; _DBG_
+            if (this.debug)                                                 ; _DBG_
                OutputDebug % "<[" A_ThisFunc "(...) -> (" k ")]"            ; _DBG_
             return k
          }
       
          RowString =
       }
-      if (this._debug)                                                       ; _DBG_
+      if (this.debug)                                                       ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"                       ; _DBG_
    }
    
@@ -414,23 +467,23 @@ class cTable {
    }
    
    Save() {   ; converts table object to string and saves it to its constructor file. Use only if oTable is created from file.
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"           ; _DBG_
       if (this.FilePath = "")
          return
       this.SaveAs(this.FilePath)
-      if (this._debug)           ; _DBG_
-         OutputDebug % "<[" A_ThisFunc "(1)]"if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
+         OutputDebug % "<[" A_ThisFunc "(1)]"if (this.debug)           ; _DBG_
       return 1
    }
 
    SaveAs(FilePath, ColumnsDelimiter="`t", RowsDelimiter="`n") {   ; converts table object to string and saves it to specified file
-      if (this._debug)                                                                                                                                       ; _DBG_
+      if (this.debug)                                                                                                                                       ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(FilePath=(" FilePath "), ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
-         ColumnsDelimiter := this.ColumnsDelimiter
+         ColumnsDelimiter := this.columnsDelimiter
       if RowsDelimiter =
-         RowsDelimiter := this.RowsDelimiter
+         RowsDelimiter := this.rowsDelimiter
       this.FilePath := FilePath
    
       FileContents := this.HeaderToString(ColumnsDelimiter) RowsDelimiter this.ToString(ColumnsDelimiter, RowsDelimiter)
@@ -438,7 +491,7 @@ class cTable {
       oFile := FileOpen(FilePath, "w `n", "UTF-8")   ; creates a new file, overwriting any existing file.
       oFile.Write(FileContents)
       oFile.Close()
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
    
@@ -450,7 +503,7 @@ class cTable {
                            "+" suffix means more permissive match type where spaces, tabs, newlines and carriage returns are not relevant for match.
       */
       
-      if (this._debug)                                                                                                                                           ; _DBG_
+      if (this.debug)                                                                                                                                           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsToSearch=(" ColumnsToSearch "), StringsToSearch=("  StringsToSearch "), MatchType=("  MatchType "))]"           ; _DBG_
       oFound := this.NewFromScheme()   ; create empty table from this template
 
@@ -645,13 +698,13 @@ class cTable {
       }
       
       oFound.LastFound := LTrim(oFound.LastFound, ",")   ; stores row numbers of found rows in latest search
-      if (this._debug)                                                           ; _DBG_
+      if (this.debug)                                                           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "() -> (" _cTable_ToString(oFound)")]"           ; _DBG_
       return oFound
    }
 
    StringReplace(params*) { ; replaces "param1" with "param2", "param3" with "param4" (etc.) in all fields in table object
-      if (this._debug)                                               ; _DBG_
+      if (this.debug)                                               ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(params=(" params "))]"     ; _DBG_
       For k,v in this
       {
@@ -659,17 +712,17 @@ class cTable {
             continue
          this[k] =  this[k].StringReplace(params) 
       }
-      if (this._debug)                                               ; _DBG_
+      if (this.debug)                                               ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"               ; _DBG_
    }
 
    ToString(ColumnsDelimiter="", RowsDelimiter= "") {      ; converts table object to string
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
          ColumnsDelimiter := this.ColumnsDelimiter
       if RowsDelimiter =
-         RowsDelimiter := this.RowsDelimiter
+         RowsDelimiter := this.rowsDelimiter
 
       MyCount := this.MaxIndex()
       Loop, %MyCount%
@@ -680,13 +733,13 @@ class cTable {
             RowString .= RowsDelimiter
       }
       RetVal := RowString
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> (" RetVal ")]"           ; _DBG_
       return RetVal
    }
    
    ToListView() {   ; puts table object to ListView
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"           ; _DBG_
       For k,v in this
       {
@@ -703,68 +756,90 @@ class cTable {
          TotalFields =
       }
       if (this._debug)           ; _DBG_
-         OutputDebug % "<[" A_ThisFunc "(...) -> ()]"           ; _DBG_
-   }
-
-   Version() {
-      if (this._debug)           ; _DBG_
-         OutputDebug % "|[" A_ThisFunc "() -> (" this._version ")]"           ; _DBG_
-      return this._version
+         OutputDebug % "<[" A_ThisFunc "() -> ()]"           ; _DBG_
    }
    
 }
 
-
+; ######################################################################################################################
 /*!
    Class: cTableRow
       Base class for handling table rows
 */
 class cTableRow {
-      /**************************************************************************************************************
-   Variable: version
-   Version of class implementation
-   ***************************************************************************************************************	
-   */
-   static _version := "0.1.0"
-   static ColumnsDelimiter := "`t"
-   static _debug := 0
+   _version := "0.1.2"
+   _columnsDelimiter := "`t"
+   _debug := 0
 
-   Version() {
-      if (this._debug)           ; _DBG_
-         OutputDebug % "|[" A_ThisFunc "() -> (" this._version ")]"           ; _DBG_
-      return this._version
-   }
-   
-   __debug(value="") {                ; _DBG_
-      if value=""                   ; _DBG_
-         return this._debug          ; _DBG_
-      value := value>1?1:0          ; _DBG_
-      this._debug := value            ; _DBG_
-   }                                ; _DBG_
-   
+   ; ##################### Properties (AHK >1.1.16.x) #################################################################
+   columnsDelimiter[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: columnsDelimiter [get/set]
+	colums Delimiter for given Row
+
+	Value:
+	flag - *true* or *false*
+	*/
+		get {
+			return this._columnsDelimiter
+		}
+		set {
+			this._columnsDelimiter := value
+			return this._columnsDelimiter
+		}
+	}
+	debug[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: debug [get/set]
+	Debug flag for debugging the object
+
+	Value:
+	flag - *true* or *false*
+	*/
+		get {
+			return this._debug
+		}
+		set {
+			mode := value<1?0:1
+			this._debug := mode
+			return this._debug
+		}
+	}
+    version[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: version [get]
+	Get the version of the class implementation
+	*/
+		get {
+			return this._version
+		}
+	}
+    
+   ; ##################### public methods ##############################################################################
    __New(CurRow="", ColumnsCount=0, ColumnsDelimiter="`t", _debug=0) {
       this.__debug(_debug)
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(CurRow=(" CurRow "), ColumnsCount=(" ColumnsCount "), ColumnsDelimiter=("  ColumnsDelimiter "))]"           ; _DBG_
       
+      this.columnsDelimiter := ColumnsDelimiter
       StringSplit, field, CurRow, %ColumnsDelimiter%
       Loop, %ColumnsCount%
          this.Insert(field%A_Index%)
       Loop, %ColumnsCount%
          field%A_Index% =
       
-      if (this._debug)                                                   ; _DBG_
+      if (this.debug)                                                   ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(" _cTable_ToString(this) ")]"          ; _DBG_
       
       return this
    }
    
    ToString(ColumnsDelimiter="") {   ; converts row object to string
-      if (this._debug)                                                   ; _DBG_
+      if (this.debug)                                                   ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "))]"            ; _DBG_
       
       if ColumnsDelimiter = 
-         ColumnsDelimiter := this.ColumnsDelimiter
+         ColumnsDelimiter := this.columnsDelimiter
       Cols := this.MaxIndex()
       Loop, %Cols%
       {
@@ -773,13 +848,13 @@ class cTableRow {
             RowString .= ColumnsDelimiter
       }
       RetVal:= RowString
-      if (this._debug)                                                  ; _DBG_
-         OutputDebug % "<[" A_ThisFunc "(...) -> (" RetVal ")]"           ; _DBG_
+      if (this.debug)                                                  ; _DBG_
+         OutputDebug % "<[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter ")) -> (" RetVal ")]"           ; _DBG_
       return RetVal
    }
    
    ToListView() {   ; puts row object to ListView
-      if (this._debug)                                   ; _DBG_
+      if (this.debug)                                   ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"            ; _DBG_
       For k,v in this
       {
@@ -788,12 +863,12 @@ class cTableRow {
          f%k% := v
       }
       LV_Add("",f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,f19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30)
-      if (this._debug)                                   ; _DBG_
+      if (this.debug)                                   ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"   ; _DBG_
    }
       
    StringReplace(params*) { ; replaces "param1" with "param2", "param3" with "param4" (etc.) in all fields in table object
-      if (this._debug)                                                     ; _DBG_
+      if (this.debug)                                                     ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(params=(" params "))]"           ; _DBG_
       For k,v in this   ; v = field
       {
@@ -811,7 +886,7 @@ class cTableRow {
          }
          this[k] := v
       }
-      if (this._debug)                                                     ; _DBG_
+      if (this.debug)                                                     ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> (" _cTable_ToString(this) ")]"   ; _DBG_
       return this 
    }
