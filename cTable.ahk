@@ -22,7 +22,7 @@ class cTable {
    _columnsDelimiter := "`t"
    _rowsDelimiter := "`n"
    _debug := 0
-   _version := "0.1.2"
+   _version := "0.1.3"
 
    ; ##################### Properties (AHK >1.1.16.x) #################################################################
    columnsDelimiter[] {
@@ -254,14 +254,16 @@ class cTable {
    
       ; add to ListView
       TotalColumns := this.ColumnNames.MaxIndex()
+      data := Object()
       For k,v in Fields
       {
          if (A_index > TotalColumns)
          break
-         f%A_index% := v
+         data.insert(v)
       }
-      LV_Add("",f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,f19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30)
-      if (this._debug)           ; _DBG_
+
+      LV_Add("", data*)
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
    
@@ -319,9 +321,10 @@ class cTable {
       LVRowNum := this.LVModifyRowNums.2   ; [2] LVRowNum
 
       this.ModifyRow(TableRowNum, oNewFields*)
+      data := Object()
       For k,v in oNewFields
-         f%k% := v
-      LV_Modify(LVRowNum,"",f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,f19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30)
+         data.insert(v)
+      LV_Modify(LVRowNum,"",data*)
       if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
@@ -745,17 +748,15 @@ class cTable {
       {
          if k is not integer   ;Rows are integers.
             continue
+         data := object()
          For k2,v2 in this[k]
          {
-            f%A_index% := v2
-            TotalFields ++
-         }   
-         LV_Add("",f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,f19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30)
-         Loop, %TotalFields%
-         f%A_index% =
-         TotalFields =
+            data.insert(v2)
+         }
+         LV_Add("",data*)
+         data :=
       }
-      if (this._debug)           ; _DBG_
+      if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "() -> ()]"           ; _DBG_
    }
    
@@ -856,13 +857,14 @@ class cTableRow {
    ToListView() {   ; puts row object to ListView
       if (this.debug)                                   ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"            ; _DBG_
+         data := object()
       For k,v in this
       {
          if k is not integer   ; field keys are integers.
             continue
-         f%k% := v
+         data.insert(v)
       }
-      LV_Add("",f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15,f16,f17,f18,f19,f20,f21,f22,f23,f24,f25,f26,f27,f28,f29,f30)
+      LV_Add("",data*)
       if (this.debug)                                   ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"   ; _DBG_
    }
