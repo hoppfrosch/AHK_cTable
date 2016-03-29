@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("rel",["Function"],[["Reload",,[["cTable",,,,0,"File:cTable.ahk:cTable.Reload","AutoHotKeyClass:cTable:Reload"]]]]);

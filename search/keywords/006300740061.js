@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("cta",["Class"],[["cTable",,[[,,,,0,"File:cTable.ahk:cTable","AutoHotKeyClass:cTable"]]],["cTableRow",,[[,,,,0,"File:cTable.ahk:cTableRow","AutoHotKeyClass:cTableRow"]]]]);

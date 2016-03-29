@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("sea",["Function"],[["Search",,[["cTable",,,,0,"File:cTable.ahk:cTable.Search","AutoHotKeyClass:cTable:Search"]]]]);

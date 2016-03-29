@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("deb",["Property"],[["debug",,[["cTable",,,,0,"File:cTable.ahk:cTable.debug","AutoHotKeyClass:cTable:debug"],["cTableRow",,,,0,"File:cTable.ahk:cTableRow.debug","AutoHotKeyClass:cTableRow:debug"]]]]);

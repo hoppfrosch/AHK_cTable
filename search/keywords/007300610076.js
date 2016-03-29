@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("sav",["Function"],[["Save",,[["cTable",,,,0,"File:cTable.ahk:cTable.Save","AutoHotKeyClass:cTable:Save"]]],["SaveAs",,[["cTable",,,,0,"File:cTable.ahk:cTable.SaveAs","AutoHotKeyClass:cTable:SaveAs"]]]]);

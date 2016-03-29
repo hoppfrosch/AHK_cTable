@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ver",["Property"],[["version",,[["cTable",,,,0,"File:cTable.ahk:cTable.version","AutoHotKeyClass:cTable:version"],["cTableRow",,,,0,"File:cTable.ahk:cTableRow.version","AutoHotKeyClass:cTableRow:version"]]]]);

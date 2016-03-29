@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("mod",["Function"],[["ModifyRow",,[["cTable",,,,0,"File:cTable.ahk:cTable.ModifyRow","AutoHotKeyClass:cTable:ModifyRow"]]]]);

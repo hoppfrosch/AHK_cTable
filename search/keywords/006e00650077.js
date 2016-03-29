@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("new",["Function"],[["NewFromScheme",,[["cTable",,,,0,"File:cTable.ahk:cTable.NewFromScheme","AutoHotKeyClass:cTable:NewFromScheme"]]]]);

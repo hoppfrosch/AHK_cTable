@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("del",["Function"],[["DeleteRow",,[["cTable",,,,0,"File:cTable.ahk:cTable.DeleteRow","AutoHotKeyClass:cTable:DeleteRow"]]]]);

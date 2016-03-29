@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("lvs",["Function"],[["LVSelInfo",,[["cTable",,,,0,"File:cTable.ahk:cTable.LVSelInfo","AutoHotKeyClass:cTable:LVSelInfo"]]]]);

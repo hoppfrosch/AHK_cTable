@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("lvm",["Function"],[["LVModify1",,[["cTable",,,,0,"File:cTable.ahk:cTable.LVModify1","AutoHotKeyClass:cTable:LVModify1"]]],["LVModify2",,[["cTable",,,,0,"File:cTable.ahk:cTable.LVModify2","AutoHotKeyClass:cTable:LVModify2"]]]]);

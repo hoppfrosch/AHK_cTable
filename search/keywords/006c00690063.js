@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("lic",["Information"],[["License",,[["cTable",,,,0,"File:cTable.ahk:cTable.License","AutoHotKeyClass:cTable:License"],["cTableRow",,,,0,"File:cTable.ahk:cTableRow.License","AutoHotKeyClass:cTableRow:License"]]]]);

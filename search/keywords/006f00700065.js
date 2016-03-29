@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("ope",["Function"],[["Open",,[["cTable",,,,0,"File:cTable.ahk:cTable.Open","AutoHotKeyClass:cTable:Open"]]]]);

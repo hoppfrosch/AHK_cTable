@@ -1,0 +1,1 @@
+NDMenu.OnSectionLoaded("files.js",[[1,"cTable.ahk"]]);

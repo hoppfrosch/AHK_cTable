@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("str",["Function"],[["StringReplace",,[["cTable",,,,0,"File:cTable.ahk:cTable.StringReplace","AutoHotKeyClass:cTable:StringReplace"],["cTableRow",,,,0,"File:cTable.ahk:cTableRow.StringReplace","AutoHotKeyClass:cTableRow:StringReplace"]]]]);

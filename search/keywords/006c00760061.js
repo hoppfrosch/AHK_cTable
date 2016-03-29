@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("lva",["Function"],[["LVAdd",,[["cTable",,,,0,"File:cTable.ahk:cTable.LVAdd","AutoHotKeyClass:cTable:LVAdd"]]]]);

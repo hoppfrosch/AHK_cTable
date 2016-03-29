@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("hea",["Function"],[["HeaderToString",,[["cTable",,,,0,"File:cTable.ahk:cTable.HeaderToString","AutoHotKeyClass:cTable:HeaderToString"]]]]);

@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("add",["Function"],[["AddRow",,[["cTable",,,,0,"File:cTable.ahk:cTable.AddRow","AutoHotKeyClass:cTable:AddRow"]]]]);

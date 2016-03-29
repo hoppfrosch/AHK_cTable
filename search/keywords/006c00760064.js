@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("lvd",["Function"],[["LVDelete",,[["cTable",,,,0,"File:cTable.ahk:cTable.LVDelete","AutoHotKeyClass:cTable:LVDelete"]]]]);

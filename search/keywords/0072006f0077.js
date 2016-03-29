@@ -1,0 +1,1 @@
+NDSearch.OnPrefixDataLoaded("row",["Function","Property"],[["Row2Num",,[["cTable",,,,0,"File:cTable.ahk:cTable.Row2Num","AutoHotKeyClass:cTable:Row2Num"]]],["Row2NumL",,[["cTable",,,,0,"File:cTable.ahk:cTable.Row2NumL","AutoHotKeyClass:cTable:Row2NumL"]]],["rowsDelimiter",,[["cTable",,,,1,"File:cTable.ahk:cTable.rowsDelimiter","AutoHotKeyClass:cTable:rowsDelimiter"]]]]);
