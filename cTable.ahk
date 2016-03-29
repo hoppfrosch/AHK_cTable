@@ -1,5 +1,5 @@
 /*!
-	Library: cTable library, version 0.0.1
+	Library: cTable library, version 0.2.0
 		Simplified handling of tables
 		
 		Based on work by Learning one (see: http://www.autohotkey.com/forum/viewtopic.php?t=65995= 
