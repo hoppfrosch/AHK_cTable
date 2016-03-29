@@ -1,31 +1,30 @@
-/*!
-	Library: cTable library, version 0.2.0
+; ****** HINT: Documentation can be extracted to HTML using NaturalDocs (http://www.naturaldocs.org/) **************
+
+; ****** HINT: Debug-lines should contain "; _DBG_" at the end of lines - using this, the debug lines could be automatically removed through scripts before releasing the sourcecode
+
+class cTable {
+; *********************************************************************************************************************************
+/*
+	Class: cTable
 		Simplified handling of tables
 		
-		Based on work by Learning one (see: http://www.autohotkey.com/forum/viewtopic.php?t=65995= 
-        
-	Author: Hoppfrosch
-	License: WTFPL
+		Based on work by LearningOne (see: http://www.autohotkey.com/forum/viewtopic.php?t=65995=)
+
+	Authors:
+	<hoppfrosch at hoppfrosch@gmx.de>: Original
+
+	About: License
+	This program is free software. It comes without any warranty, to the extent permitted by applicable law. You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. See <WTFPL at http://www.wtfpl.net/> for more details.
 */
+	static ColumnNames := Object()
+	static FilePath := ""
+	_columnsDelimiter := "`t"
+	_rowsDelimiter := "`n"
+	_debug := 0
+	_version := "0.2.1"
 
-; ToDo: Automatische Update
-; ToDo: Versionsüberprüfung (Numify der eigenen Version)
-
-/*!
-   Class: cTable
-      Simplified handling of tables
-   Inherits: cTableBase
-*/
-class cTable {
-   static ColumnNames := Object()
-   static FilePath := ""
-   _columnsDelimiter := "`t"
-   _rowsDelimiter := "`n"
-   _debug := 0
-   _version := "0.2.0"
-
-   ; ##################### Properties (AHK >1.1.16.x) #################################################################
-   columnsDelimiter[] {
+	; ##################### Properties (AHK >1.1.16.x) #################################################################
+	columnsDelimiter[] {
 	/* ------------------------------------------------------------------------------- 
 	Property: columnsDelimiter [get/set]
 	Column delimiter for the table file
@@ -84,8 +83,20 @@ class cTable {
 		}
 	}
     
-   
-   ; ##################### public methods ##############################################################################
+	; ##################### public methods ##############################################################################
+	/* ---------------------------------------------------------------------------------------
+	Method: __New
+		Constructor (*INTERNAL*)
+
+	Parameters:
+		InputVariableOrFile - Variable or file containing the CSV-Input
+		ColumnsDelimiter - columns delimiter within CSV-File
+		RowsDelimiter - rows delimiter within CSV-File
+		_debug - Flag to enable debugging
+
+	Returns:
+		cTable-instance
+	*/  
    __New(InputVariableOrFile, ColumnsDelimiter := "`t", RowsDelimiter :=  "`n", _debug := 0) {
       this.debug := _debug
       if (this.debug)           ; _DBG_
@@ -135,8 +146,12 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...) -> (" _cTable_ToString(this) ")]"   ; _DBG_
       return this
    }
-   
-   AddRow(Fields*) {   ; adds new row to table (to the bottom)
+
+   	/* ---------------------------------------------------------------------------------------
+	Method: AddRow
+		adds new row to table (to the bottom)
+	*/
+   AddRow(Fields*) {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(Fields=(" Fields "))]"           ; _DBG_
       
@@ -156,9 +171,12 @@ class cTable {
       
       return NewRowNum
    }
-   
-   Col2Num(ColumnsToSearch) {      ; converts column name(s) to column number(s)
-      
+
+   /* ---------------------------------------------------------------------------------------
+	Method: Col2Num
+		converts column name(s) to column number(s)
+	*/
+   Col2Num(ColumnsToSearch) {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsToSearch=(" ColumnsToSearch "))]"           ; _DBG_
       
@@ -176,8 +194,12 @@ class cTable {
       
       return RetVal
    }
-   
-   DeleteRow(RowToDeleteNumber := "") {   ; deletes row(s)
+
+   /* ---------------------------------------------------------------------------------------
+	Method: DeleteRow
+		deletes row(s)
+	*/
+   DeleteRow(RowToDeleteNumber := "") {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowToDeleteNumber=(" RowToDeleteNumber "))]"           ; _DBG_
       
@@ -210,7 +232,11 @@ class cTable {
       if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"           ; _DBG_
    }
-   
+
+   /* ---------------------------------------------------------------------------------------
+	Method: HeaderToString
+		converts table's header (first row) to string
+	*/
    HeaderToString(ColumnsDelimiter := "") {   ; converts table's header (first row) to string
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "))]"           ; _DBG_
@@ -223,13 +249,17 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...) -> (" RetVal ")]"            ; _DBG_
       return RetVal
    }
-   
-   InsertRow(NewRowNum ,Fields*) {   ; inserts new row in table
-      if (this.debug)           ; _DBG_
-         OutputDebug % ">[" A_ThisFunc "(NewRowNum=(" NewRowNum "), Fields=(" Fields "))]"           ; _DBG_
-      if NewRowNum = 0   ; not allowed
-         return
-   
+
+   /* ---------------------------------------------------------------------------------------
+	Method: InsertRow
+		inserts new row in table
+	*/
+	InsertRow(NewRowNum ,Fields*) {
+		if (this.debug)           ; _DBG_
+			OutputDebug % ">[" A_ThisFunc "(NewRowNum=(" NewRowNum "), Fields=(" Fields "))]"           ; _DBG_
+		if NewRowNum = 0   ; not allowed
+			return
+
       if (NewRowNum > this.MaxIndex())
          NewRowNum := this.MaxIndex() + 1   ; add as last row
    
@@ -245,12 +275,16 @@ class cTable {
       if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
-   
-   LVAdd(Fields*) {   ; adds new row to oTable and ListView
-      if (this.debug)           ; _DBG_
-         OutputDebug % ">[" A_ThisFunc "(Fields=(" _cTable_ToString(Fields) "))]"           ; _DBG_
-      ; add to oTable
-      this.AddRow(Fields*)   
+
+	/* ---------------------------------------------------------------------------------------
+	Method: LVAdd
+		adds new row to oTable and ListView
+	*/
+	LVAdd(Fields*) {   ; 
+		if (this.debug)           ; _DBG_
+			OutputDebug % ">[" A_ThisFunc "(Fields=(" _cTable_ToString(Fields) "))]"           ; _DBG_
+		; add to oTable
+		this.AddRow(Fields*)   
    
       ; add to ListView
       TotalColumns := this.ColumnNames.MaxIndex()
@@ -266,14 +300,18 @@ class cTable {
       if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
-   
-   LVDelete(RowNumToSearch := "") {   ; deletes selected row from oTable and ListView. Deletes just 1. selected row for now.
+
+	/* ---------------------------------------------------------------------------------------
+	Method: LVDelete
+		deletes selected row from oTable and ListView. Deletes just 1. selected row for now.
+	*/
+	LVDelete(RowNumToSearch := "") {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowNumToSearch=(" RowNumToSearch "))]"           ; _DBG_
       oSelected := this.LVSelInfo(RowNumToSearch)
       For k,v in oSelected   ; oSelected structure: o1SelRow, o2SelRow, o3SelRow, etc.
       {
-         ; structure: [1] oTableRowNum     [2] LVRowNum      [3,4,5 etc.] FieldsText
+         ; [1] oTableRowNum     [2] LVRowNum      [3,4,5 etc.] FieldsText
          for k2,v2 in oSelected[k]
          {
             if A_index = 1      ; [1] oTableRowNum
@@ -288,10 +326,14 @@ class cTable {
          return  oSelected.1      ; allow deleting just 1. selected row for now. Ignore other. Return info about deleted row.
       }
    }
-   
-   LVModify1(RowNumToSearch := "") {   ; Returns row's to modify fields. Must be called prior to oTable.LVModify2()
-      ; Relevant for machine: stores oTableRowNum and LVRowNum in oTable.LVModifyRowNums
-      ; for faster performance when displaying search results in LV, specify oFound.LastFound as RowNumToSearch
+
+	/* ---------------------------------------------------------------------------------------
+	Method: LVModify1
+		Returns row's to modify fields. Must be called prior to oTable.LVModify2()
+		Relevant for machine: stores oTableRowNum and LVRowNum in oTable.LVModifyRowNums
+		for faster performance when displaying search results in LV, specify oFound.LastFound as RowNumToSearch
+	*/
+	LVModify1(RowNumToSearch := "") {   ; 
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowNumToSearch=(" RowNumToSearch "))]"           ; _DBG_
       oSelected := this.LVSelInfo(RowNumToSearch)
@@ -313,7 +355,11 @@ class cTable {
       return oFields   ; return row's to modify fields
    } 
    
-   LVModify2(oNewFields) {   ; modifies row in ListView and oTable
+	/* ---------------------------------------------------------------------------------------
+	Method: LVModify2
+		modifies row in ListView and oTable
+	*/
+	LVModify2(oNewFields) {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(oNewFields=(" _cTable_ToString(oNewFields) "))]"           ; _DBG_
     
@@ -329,7 +375,11 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
 
-   LVSelInfo(RowNumToSearch := "") {   ; gets info about selected rows in ListView
+	/* ---------------------------------------------------------------------------------------
+	Method: LVSelInfo
+		gets info about selected rows in ListView
+	*/	
+	LVSelInfo(RowNumToSearch := "") {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowNumToSearch=(" RowNumToSearch "))]"           ; _DBG_
       Loop, %   LV_GetCount("Column") ; total number of columns in LV
@@ -365,7 +415,11 @@ class cTable {
       return oSelected
    }
 
-   ModifyRow(RowToModifyNumber, Fields*) {   ; modifies row(s)
+	/* ---------------------------------------------------------------------------------------
+	Method: ModifyRow
+		modifies row(s)
+	*/
+	ModifyRow(RowToModifyNumber, Fields*) {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowToModifyNumber=(" RowToModifyNumber "), Fields=(" Fields "))]"           ; _DBG_
    
@@ -387,8 +441,12 @@ class cTable {
       if (this.debug)           ; _DBG_
       OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
- 
-   NewFromScheme() {   ; creates new empty table from table object template
+
+	/* ---------------------------------------------------------------------------------------
+	Method: NewFromScheme
+		creates new empty table from table object template
+	*/
+	NewFromScheme() {   ; 
       if (this.debug)                                                           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"                                    ; _DBG_
       oNewTable := new cTable("", this.ColumnsDelimiter, this.rowsDelimiter)
@@ -397,16 +455,24 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "() -> (" _cTable_ToString(oTable)")]"           ; _DBG_
       return oNewTable
    }
-   
-   Open() {   ; opens table's constructor file in Notepad if it exists
+
+	/* ---------------------------------------------------------------------------------------
+	Method: Open
+		opens table's constructor file in Notepad if it exists
+	*/
+	Open() {
       if (this.debug)                                                           ; _DBG_
          OutputDebug % "|[" A_ThisFunc "()]"                                    ; _DBG_
       FilePath := this.FilePath
       IfExist, %FilePath%
          Run, notepad "%FilePath%"
    }
-   
-   Reload() {   ; reads table's constructor file again and reconstructs table object if constructor file exists   
+
+	/* ---------------------------------------------------------------------------------------
+	Method: Reload
+		reads table's constructor file again and reconstructs table object if constructor file exists 
+	*/
+	Reload() {
       FilePath := this.FilePath
       IfNotExist, %FilePath%   ; if constructor file doesn't exist
          return   ; return and leave old table object as is
@@ -415,8 +481,12 @@ class cTable {
    
       return this   ; not necessary as first param is ByRef, but keep it
    }
-   
-   Row2Num(Fields*) {   ; converts row identified by its fields to number. First matching.
+
+	/* ---------------------------------------------------------------------------------------
+	Method: Row2Num
+		converts row identified by its fields to number. First matching
+	*/
+   Row2Num(Fields*) {
       if (this.debug)                                                           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(Fields=(" Fields "))]"                 ; _DBG_
       TotalColumns := this.ColumnNames.MaxIndex()
@@ -444,8 +514,12 @@ class cTable {
       if (this.debug)                                                       ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"                       ; _DBG_
    }
-   
-   Row2NumL(RowNumToSearch, Fields*) {   ; converts row identified by its fields to number but searches only through specified row numbers (limit). First matching. RowNumToSearch should be oFound.LastFound's value.
+
+	/* ---------------------------------------------------------------------------------------
+	Method: Row2NumL
+		converts row identified by its fields to number but searches only through specified row numbers (limit). First matching.RowNumToSearch should be oFound.LastFound's value
+	*/
+   Row2NumL(RowNumToSearch, Fields*) {
       TotalColumns := this.ColumnNames.MaxIndex()
       For k,v in Fields
       {
@@ -468,8 +542,12 @@ class cTable {
          RowString =
       }
    }
-   
-   Save() {   ; converts table object to string and saves it to its constructor file. Use only if oTable is created from file.
+
+	/* ---------------------------------------------------------------------------------------
+	Method: Save
+		converts table object to string and saves it to its constructor file. Use only if oTable is created from file.
+	*/
+   Save() {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"           ; _DBG_
       if (this.FilePath = "")
@@ -480,7 +558,11 @@ class cTable {
       return 1
    }
 
-   SaveAs(FilePath, ColumnsDelimiter := "`t", RowsDelimiter := "`n") {   ; converts table object to string and saves it to specified file
+	/* ---------------------------------------------------------------------------------------
+	Method: SaveAs
+		converts table object to string and saves it to specified file
+	*/
+   SaveAs(FilePath, ColumnsDelimiter := "`t", RowsDelimiter := "`n") {
       if (this.debug)                                                                                                                                       ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(FilePath=(" FilePath "), ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
@@ -497,8 +579,12 @@ class cTable {
       if (this.debug)           ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
-   
-   Search(ColumnsToSearch, StringsToSearch, MatchType := "containing") {   ; performs search through columns or whole table
+
+	/* ---------------------------------------------------------------------------------------
+	Method: Search
+		cperforms search through columns or whole table
+	*/
+   Search(ColumnsToSearch, StringsToSearch, MatchType := "containing") {
       /* Parameters:
       ColumnsToSearch      "|" delimited list of columns to search. If empty (""), search through whole table (all columns.)
       StringsToSearch      "|" delimited list of strings to search except in RegEx MatchType.
@@ -706,7 +792,11 @@ class cTable {
       return oFound
    }
 
-   StringReplace(params*) { ; replaces "param1" with "param2", "param3" with "param4" (etc.) in all fields in table object
+	/* ---------------------------------------------------------------------------------------
+	Method: StringReplace
+		replaces "param1" with "param2", "param3" with "param4" (etc.) in all fields in table object
+	*/
+   StringReplace(params*) { ; 
       if (this.debug)                                               ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(params=(" params "))]"     ; _DBG_
       For k,v in this
@@ -719,7 +809,11 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"               ; _DBG_
    }
 
-   ToString(ColumnsDelimiter := "", RowsDelimiter := "") {      ; converts table object to string
+	/* ---------------------------------------------------------------------------------------
+	Method: ToString
+		converts table object to string
+	*/
+   ToString(ColumnsDelimiter := "", RowsDelimiter := "") {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
@@ -740,8 +834,12 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...) -> (" RetVal ")]"           ; _DBG_
       return RetVal
    }
-   
-   ToListView() {   ; puts table object to ListView
+
+	/* ---------------------------------------------------------------------------------------
+	Method: ToListView
+		puts table object to ListView
+	*/
+   ToListView() {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"           ; _DBG_
       For k,v in this
@@ -762,12 +860,20 @@ class cTable {
    
 }
 
-; ######################################################################################################################
-/*!
-   Class: cTableRow
-      Base class for handling table rows
-*/
 class cTableRow {
+; ********************************************************************************************************************************
+/*
+	Class: cTableRow
+		Base class for handling table rows
+		
+		Based on work by LearningOne (see: http://www.autohotkey.com/forum/viewtopic.php?t=65995=)
+
+	Authors:
+	<hoppfrosch at hoppfrosch@gmx.de>: Original
+
+	About: License
+	This program is free software. It comes without any warranty, to the extent permitted by applicable law. You can redistribute it and/or modify it under the terms of the Do What The Fuck You Want To Public License, Version 2, as published by Sam Hocevar. See <WTFPL at http://www.wtfpl.net/> for more details.
+*/
    _version := "0.1.2"
    _columnsDelimiter := "`t"
    _debug := 0
@@ -817,6 +923,19 @@ class cTableRow {
 	}
     
    ; ##################### public methods ##############################################################################
+   /* ---------------------------------------------------------------------------------------
+	Method: __New
+		Constructor (*INTERNAL*)
+
+	Parameters:
+		CurRow - current row
+		ColumnsCount - number of columns
+		ColumnsDelimiter - columns delimiter
+		_debug - Flag to enable debugging
+
+	Returns:
+		cTableRow-instance
+	*/  
    __New(CurRow := "", ColumnsCount := 0, ColumnsDelimiter := "`t", _debug := 0) {
       this.__debug(_debug)
       if (this.debug)           ; _DBG_
@@ -834,7 +953,11 @@ class cTableRow {
       
       return this
    }
-   
+
+	/* ---------------------------------------------------------------------------------------
+	Method: ToString
+		converts row object to string
+	*/
    ToString(ColumnsDelimiter := "") {   ; converts row object to string
       if (this.debug)                                                   ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "))]"            ; _DBG_
@@ -853,8 +976,12 @@ class cTableRow {
          OutputDebug % "<[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter ")) -> (" RetVal ")]"           ; _DBG_
       return RetVal
    }
-   
-   ToListView() {   ; puts row object to ListView
+
+	/* ---------------------------------------------------------------------------------------
+	Method: ToListView
+		cputs row object to ListView
+	*/
+   ToListView() {
       if (this.debug)                                   ; _DBG_
          OutputDebug % ">[" A_ThisFunc "()]"            ; _DBG_
          data := object()
@@ -868,7 +995,11 @@ class cTableRow {
       if (this.debug)                                   ; _DBG_
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"   ; _DBG_
    }
-      
+
+	/* ---------------------------------------------------------------------------------------
+	Method: StringReplace
+		replaces "param1" with "param2", "param3" with "param4" (etc.) in all fields in row object
+	*/
    StringReplace(params*) { ; replaces "param1" with "param2", "param3" with "param4" (etc.) in all fields in table object
       if (this.debug)                                                     ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(params=(" params "))]"           ; _DBG_
