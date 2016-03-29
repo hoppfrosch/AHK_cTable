@@ -38,9 +38,10 @@ popd
 
 ECHO Publish documentation to gh-page branch ...
 pushd ..
-MKDIR gh-pages
+rmdir /S /Q gh-pages_NEW
+MKDIR gh-pages_NEW
 popd
-pushd ..\gh-pages
+pushd ..\gh-pages_NEW
 xcopy /E /Y %ROOT%\%DOC% .
 popd
 rmdir /S /Q %WORK%
