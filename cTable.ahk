@@ -22,7 +22,7 @@ class cTable {
    _columnsDelimiter := "`t"
    _rowsDelimiter := "`n"
    _debug := 0
-   _version := "0.1.3"
+   _version := "0.2.0"
 
    ; ##################### Properties (AHK >1.1.16.x) #################################################################
    columnsDelimiter[] {
@@ -177,7 +177,7 @@ class cTable {
       return RetVal
    }
    
-   DeleteRow(RowToDeleteNumber="") {   ; deletes row(s)
+   DeleteRow(RowToDeleteNumber := "") {   ; deletes row(s)
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowToDeleteNumber=(" RowToDeleteNumber "))]"           ; _DBG_
       
@@ -211,7 +211,7 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"           ; _DBG_
    }
    
-   HeaderToString(ColumnsDelimiter="") {   ; converts table's header (first row) to string
+   HeaderToString(ColumnsDelimiter := "") {   ; converts table's header (first row) to string
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
@@ -267,7 +267,7 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
    
-   LVDelete(RowNumToSearch="") {   ; deletes selected row from oTable and ListView. Deletes just 1. selected row for now.
+   LVDelete(RowNumToSearch := "") {   ; deletes selected row from oTable and ListView. Deletes just 1. selected row for now.
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowNumToSearch=(" RowNumToSearch "))]"           ; _DBG_
       oSelected := this.LVSelInfo(RowNumToSearch)
@@ -289,7 +289,7 @@ class cTable {
       }
    }
    
-   LVModify1(RowNumToSearch="") {   ; Returns row's to modify fields. Must be called prior to oTable.LVModify2()
+   LVModify1(RowNumToSearch := "") {   ; Returns row's to modify fields. Must be called prior to oTable.LVModify2()
       ; Relevant for machine: stores oTableRowNum and LVRowNum in oTable.LVModifyRowNums
       ; for faster performance when displaying search results in LV, specify oFound.LastFound as RowNumToSearch
       if (this.debug)           ; _DBG_
@@ -329,7 +329,7 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
 
-   LVSelInfo(RowNumToSearch="") {   ; gets info about selected rows in ListView
+   LVSelInfo(RowNumToSearch := "") {   ; gets info about selected rows in ListView
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(RowNumToSearch=(" RowNumToSearch "))]"           ; _DBG_
       Loop, %   LV_GetCount("Column") ; total number of columns in LV
@@ -480,7 +480,7 @@ class cTable {
       return 1
    }
 
-   SaveAs(FilePath, ColumnsDelimiter="`t", RowsDelimiter="`n") {   ; converts table object to string and saves it to specified file
+   SaveAs(FilePath, ColumnsDelimiter := "`t", RowsDelimiter := "`n") {   ; converts table object to string and saves it to specified file
       if (this.debug)                                                                                                                                       ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(FilePath=(" FilePath "), ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
@@ -498,7 +498,7 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...)]"           ; _DBG_
    }
    
-   Search(ColumnsToSearch, StringsToSearch, MatchType="containing") {   ; performs search through columns or whole table
+   Search(ColumnsToSearch, StringsToSearch, MatchType := "containing") {   ; performs search through columns or whole table
       /* Parameters:
       ColumnsToSearch      "|" delimited list of columns to search. If empty (""), search through whole table (all columns.)
       StringsToSearch      "|" delimited list of strings to search except in RegEx MatchType.
@@ -719,7 +719,7 @@ class cTable {
          OutputDebug % "<[" A_ThisFunc "(...) -> ()]"               ; _DBG_
    }
 
-   ToString(ColumnsDelimiter="", RowsDelimiter= "") {      ; converts table object to string
+   ToString(ColumnsDelimiter := "", RowsDelimiter := "") {      ; converts table object to string
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "), RowsDelimiter=("  RowsDelimiter "))]"           ; _DBG_
       if ColumnsDelimiter =
@@ -773,7 +773,7 @@ class cTableRow {
    _debug := 0
 
    ; ##################### Properties (AHK >1.1.16.x) #################################################################
-   columnsDelimiter[] {
+	columnsDelimiter[] {
 	/* ------------------------------------------------------------------------------- 
 	Property: columnsDelimiter [get/set]
 	colums Delimiter for given Row
@@ -817,7 +817,7 @@ class cTableRow {
 	}
     
    ; ##################### public methods ##############################################################################
-   __New(CurRow="", ColumnsCount=0, ColumnsDelimiter="`t", _debug=0) {
+   __New(CurRow := "", ColumnsCount := 0, ColumnsDelimiter := "`t", _debug := 0) {
       this.__debug(_debug)
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(CurRow=(" CurRow "), ColumnsCount=(" ColumnsCount "), ColumnsDelimiter=("  ColumnsDelimiter "))]"           ; _DBG_
@@ -835,7 +835,7 @@ class cTableRow {
       return this
    }
    
-   ToString(ColumnsDelimiter="") {   ; converts row object to string
+   ToString(ColumnsDelimiter := "") {   ; converts row object to string
       if (this.debug)                                                   ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(ColumnsDelimiter=("  ColumnsDelimiter "))]"            ; _DBG_
       
@@ -896,7 +896,7 @@ class cTableRow {
 
 
 ;====== Shared, other ======
-_cTable_SplitToObj(String,Delimiter="|") {
+_cTable_SplitToObj(String, Delimiter := "|") {
    obj := Object()
    Loop, parse, String, %Delimiter%
       obj.Insert(A_LoopField)
