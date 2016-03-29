@@ -1,2 +1,3 @@
 *.bak
 UTest/tmp_*.txt
+/NG
