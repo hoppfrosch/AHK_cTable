@@ -21,7 +21,7 @@ class cTable {
 	_columnsDelimiter := "`t"
 	_rowsDelimiter := "`n"
 	_debug := 0
-	_version := "0.2.3"
+	_version := "0.2.4"
 
 	; ##################### Properties (AHK >1.1.16.x) #################################################################
 	columns[] {
@@ -896,7 +896,16 @@ class cTableRow {
    _columnsDelimiter := "`t"
    _debug := 0
 
-   ; ##################### Properties (AHK >1.1.16.x) #################################################################
+	; ##################### Properties (AHK >1.1.16.x) #################################################################
+	columns[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: columns [get]
+	Number of columns in Table
+	*/
+		get {
+			return this.MaxIndex()
+		}
+	}
 	columnsDelimiter[] {
 	/* ------------------------------------------------------------------------------- 
 	Property: columnsDelimiter [get/set]
@@ -982,11 +991,11 @@ class cTableRow {
       
       if ColumnsDelimiter = 
          ColumnsDelimiter := this.columnsDelimiter
-      Cols := this.MaxIndex()
+      Cols := this.columns
       Loop, %Cols%
       {
          RowString .= this[A_Index]
-         if (A_Index < this.MaxIndex() )
+         if (A_Index < this.columns )
             RowString .= ColumnsDelimiter
       }
       RetVal:= RowString
