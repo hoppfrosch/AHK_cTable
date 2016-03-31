@@ -21,7 +21,7 @@ class cTable {
 	_columnsDelimiter := "`t"
 	_rowsDelimiter := "`n"
 	_debug := 0
-	_version := "0.2.1"
+	_version := "0.2.2"
 
 	; ##################### Properties (AHK >1.1.16.x) #################################################################
 	columnsDelimiter[] {
@@ -55,6 +55,15 @@ class cTable {
 			mode := value<1?0:1
 			this._debug := mode
 			return this._debug
+		}
+	}
+	rows[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: rows [get]
+	Number of data rows in Table (without Header row)
+	*/
+		get {
+			return this.MaxIndex()
 		}
 	}
     rowsDelimiter[] {
@@ -155,7 +164,7 @@ class cTable {
       if (this.debug)           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(Fields=(" Fields "))]"           ; _DBG_
       
-      NewRowNum := this.MaxIndex() + 1
+      NewRowNum := this.rows + 1
       TotalColumns := this.ColumnNames.MaxIndex()
       %NewRowNum% := new cTableRow("",0,this.columnsDelimiter)
       For k,v in Fields
@@ -205,7 +214,7 @@ class cTable {
       
       if (RowToDeleteNumber = 0)   ; delete all existing rows
       {
-         this.Remove(1, this.MaxIndex())
+         this.Remove(1, this.rows)
          if (this.debug)           ; _DBG_
             OutputDebug % "<[" A_ThisFunc "(...) -> ()]"           ; _DBG_
          return
@@ -213,7 +222,7 @@ class cTable {
       Else if (RowToDeleteNumber = "")   ; delete last row
       {
          oDeletedRow := Object()
-         LastRN := this.MaxIndex()
+         LastRN := this.rows
          oDeletedRow := this[LastRN]
          this.Remove(LastRN)
          if (this.debug)           ; _DBG_
@@ -260,8 +269,8 @@ class cTable {
 		if NewRowNum = 0   ; not allowed
 			return
 
-      if (NewRowNum > this.MaxIndex())
-         NewRowNum := this.MaxIndex() + 1   ; add as last row
+      if (NewRowNum > this.rows)
+         NewRowNum := this.rows + 1   ; add as last row
    
       %NewRowNum% := new cTableRow("",0,this.columnsDelimiter)
       TotalColumns := this.ColumnNames.MaxIndex()
@@ -433,7 +442,7 @@ class cTable {
       }
       if RowToModifyNumber = 0   ; modify all existing rows
       {
-         Loop, % this.MaxIndex()
+         Loop, % this.rows
             this[A_Index] := oModifyedRow
       }
       else   ; modify specified row
@@ -821,12 +830,12 @@ class cTable {
       if RowsDelimiter =
          RowsDelimiter := this.rowsDelimiter
 
-      MyCount := this.MaxIndex()
+      MyCount := this.rows
       Loop, %MyCount%
       {
          Row := this[A_Index]
          RowString .= Row.ToString()
-         if (A_Index < this.MaxIndex() )
+         if (A_Index < this.rows )
             RowString .= RowsDelimiter
       }
       RetVal := RowString
