@@ -21,9 +21,18 @@ class cTable {
 	_columnsDelimiter := "`t"
 	_rowsDelimiter := "`n"
 	_debug := 0
-	_version := "0.2.2"
+	_version := "0.2.3"
 
 	; ##################### Properties (AHK >1.1.16.x) #################################################################
+	columns[] {
+	/* ------------------------------------------------------------------------------- 
+	Property: columns [get]
+	Number of columns in Table
+	*/
+		get {
+			return this.ColumnNames.MaxIndex()
+		}
+	}
 	columnsDelimiter[] {
 	/* ------------------------------------------------------------------------------- 
 	Property: columnsDelimiter [get/set]
@@ -165,7 +174,7 @@ class cTable {
          OutputDebug % ">[" A_ThisFunc "(Fields=(" Fields "))]"           ; _DBG_
       
       NewRowNum := this.rows + 1
-      TotalColumns := this.ColumnNames.MaxIndex()
+      TotalColumns := this.columns
       %NewRowNum% := new cTableRow("",0,this.columnsDelimiter)
       For k,v in Fields
       {
@@ -273,7 +282,7 @@ class cTable {
          NewRowNum := this.rows + 1   ; add as last row
    
       %NewRowNum% := new cTableRow("",0,this.columnsDelimiter)
-      TotalColumns := this.ColumnNames.MaxIndex()
+      TotalColumns := this.columns
       For k,v in Fields
       {
          if (A_index > TotalColumns)
@@ -296,7 +305,7 @@ class cTable {
 		this.AddRow(Fields*)   
    
       ; add to ListView
-      TotalColumns := this.ColumnNames.MaxIndex()
+      TotalColumns := this.columns
       data := Object()
       For k,v in Fields
       {
@@ -433,7 +442,7 @@ class cTable {
          OutputDebug % ">[" A_ThisFunc "(RowToModifyNumber=(" RowToModifyNumber "), Fields=(" Fields "))]"           ; _DBG_
    
       oModifyedRow := new cTableRow("",0,this.columnsDelimiter)
-      TotalColumns := this.ColumnNames.MaxIndex()
+      TotalColumns := this.columns
       For k,v in Fields
       {
          if (A_index > TotalColumns)
@@ -498,7 +507,7 @@ class cTable {
    Row2Num(Fields*) {
       if (this.debug)                                                           ; _DBG_
          OutputDebug % ">[" A_ThisFunc "(Fields=(" Fields "))]"                 ; _DBG_
-      TotalColumns := this.ColumnNames.MaxIndex()
+      TotalColumns := this.columns
       For k,v in Fields
       {
          if (A_index > TotalColumns)
@@ -529,7 +538,7 @@ class cTable {
 		converts row identified by its fields to number but searches only through specified row numbers (limit). First matching.RowNumToSearch should be oFound.LastFound's value
 	*/
    Row2NumL(RowNumToSearch, Fields*) {
-      TotalColumns := this.ColumnNames.MaxIndex()
+      TotalColumns := this.columns
       For k,v in Fields
       {
          if (A_index > TotalColumns)
