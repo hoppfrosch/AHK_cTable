@@ -2,6 +2,8 @@
 
 ; ****** HINT: Debug-lines should contain "; _DBG_" at the end of lines - using this, the debug lines could be automatically removed through scripts before releasing the sourcecode
 
+gVersion := "0.3.0-unstable.11"
+ 
 class cTable {
 ; *********************************************************************************************************************************
 /*
@@ -21,7 +23,7 @@ class cTable {
 	_columnsDelimiter := "`t"
 	_rowsDelimiter := "`n"
 	_debug := 0
-	_version := "0.2.4"
+	_version := gVersion
 
 	; ##################### Properties (AHK >1.1.16.x) #################################################################
 	columns[] {
